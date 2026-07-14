@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
-# Installs Nginx
+# Installs and configures Nginx to serve "Holberton School" at /
 
-apt-get update
+apt-get update -y
 apt-get install -y nginx
+
 echo "Holberton School" > /var/www/html/index.html
-service nginx start
+
+# Kill any existing nginx process, then start fresh
+service nginx stop 2>/dev/null
+nginx
