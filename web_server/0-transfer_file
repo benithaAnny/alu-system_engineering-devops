@@ -1,5 +1,7 @@
-#!/usr/bin/env bash
-# This bash script transfers a file to the home directory of a remote server
+
+ #!/usr/bin/env bash
+# This bash script transfers a file to the home directory of a remote server,
+# and ensures Apache serves it via a symlink at the document root.
 
 file_path="$1"
 server_ip="$2"
@@ -13,10 +15,15 @@ fi
 
 scp -i "$ssh_key" -o StrictHostKeyChecking=no "$file_path" "$username@$server_ip:~/"
 
-# Check if the SCP command was successful
 if [ $? -eq 0 ]; then
     echo "File transferred successfully."
 else
     echo "Failed to transfer file."
     exit 1
 fi
+
+# Ensure Apache's document root symlinks to the transferred file
+ssh -i "$ssh_key" -o StrictHostKeyChecking=no "$username@$server_ip" \
+    "sudo rm -f /var/www/html/index.html && \
+     sudo ln -s /home/$username/$(basename "$file_path") /var/www/html/index.html && \
+     sudo service apache2 reload"
