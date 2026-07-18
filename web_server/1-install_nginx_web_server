@@ -3,15 +3,16 @@
 # Nginx listens on port 80
 # The GET request to / should return a page containing "Holberton School"
 
-sudo apt-get update -y
-sudo apt-get install -y nginx
+export DEBIAN_FRONTEND=noninteractive
 
-# Make sure the web root exists (nginx creates it too, -p avoids errors if it already does)
-sudo mkdir -p /var/www/html
+apt-get update -y
+apt-get install -y nginx
 
-# Write the required content (must use tee with sudo, NOT sudo echo > file)
-echo "Holberton School" | sudo tee /var/www/html/index.html
+# Make sure the web root exists
+mkdir -p /var/www/html
+
+# Write the required content
+echo "Holberton School" > /var/www/html/index.html
 
 # Start/restart nginx without systemctl
-sudo service nginx restart
-
+service nginx restart
