@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # duplicate web-01 to web-02
 # these scripts are an upgrade from the web-server scripts...
-
 # uncomment to see the script run in action
 #set -x
 
@@ -9,7 +8,6 @@ echo -e "Updating and doing some minor checks...\n"
 
 function install() {
 	command -v "$1" &> /dev/null
-
 	#shellcheck disable=SC2181
 	if [ $? -ne 0 ]; then
 		echo -e "	Installing: $1$\n"
@@ -59,8 +57,8 @@ server_config=\
 		listen 80 default_server;
 		listen [::]:80 default_server;
 		root /var/www/html;
-		index index.html index.htm index.nginx-debian.html
-		server_name_;
+		index index.html index.htm index.nginx-debian.html;
+		server_name _;
 		add_header X-Served-By \$hostname;
 		location / {
 			try_files \$uri \$uri/ =404;
@@ -77,8 +75,17 @@ server_config=\
 #shellcheck disable=SC2154
 echo "$server_config" | sudo dd status=none of=/etc/nginx/sites-enabled/default
 
-if [ "$(pgrep -c nginx)" -le 0 ]; then
-	sudo service nginx start
+# validate config before reloading, so we never restart into a broken state
+if sudo nginx -t; then
+	if [ "$(pgrep -c nginx)" -le 0 ]; then
+		sudo service nginx start
+	else
+		sudo service nginx restart
+	fi
 else
-	sudo service nginx restart
+	echo "nginx config test failed - not restarting, check /etc/nginx/sites-enabled/default"
+	exit 1
 fi
+
+
+
