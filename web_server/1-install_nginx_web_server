@@ -8,11 +8,13 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update -y
 apt-get install -y nginx
 
-# Make sure the web root exists
+# Make sure the web root exists and has our content
 mkdir -p /var/www/html
-
-# Write the required content
 echo "Holberton School" > /var/www/html/index.html
+
+# Force nginx's default site to actually serve from /var/www/html,
+# regardless of what the distro's default root path was
+sed -i 's|root .*;|root /var/www/html;|' /etc/nginx/sites-available/default
 
 # Start/restart nginx without systemctl
 service nginx restart
