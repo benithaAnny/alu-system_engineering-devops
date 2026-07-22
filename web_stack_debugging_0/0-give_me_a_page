@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-# Fix: Apache was blocked from starting by policy-rc.d (exit 101),
-# and had a stale PID file left over in the image.
-# Bypass service/invoke-rc.d and start Apache directly via apache2ctl.
-
+pkill apache2 2>/dev/null
 rm -f /var/run/apache2/apache2.pid
 apache2ctl start
 echo "Hello Holberton" > /var/www/html/index.html
