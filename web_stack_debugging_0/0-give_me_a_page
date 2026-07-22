@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-# make apache server that returns Hello Holberton 
+# Fix: Apache was blocked from starting by policy-rc.d (exit 101),
+# and had a stale PID file left over in the image.
+# Bypass service/invoke-rc.d and start Apache directly via apache2ctl.
 
-sudo apt-get update -y
-sudo apt-get install -y apache2
-sudo /etc/init.d/apache2 start
-echo "Hello Holberton" | sudo tee -a /var/www/html/index.html
-sudo /etc/init.d/apache2 restart
+rm -f /var/run/apache2/apache2.pid
+apache2ctl start
+echo "Hello Holberton" > /var/www/html/index.html
+service apache2 status
